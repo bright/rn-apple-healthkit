@@ -129,6 +129,7 @@
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
     NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
     NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    BOOL skipManual = [RCTAppleHealthKit boolFromOptions:input key:@"skipManual" withDefault:FALSE];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
@@ -142,6 +143,7 @@
                                          endDate:endDate
                                        ascending:ascending
                                            limit:limit
+                                      skipManual:skipManual
                                       completion:^(NSArray *arr, NSError *err){
         if (err != nil) {
             NSLog(@"error with fetchCumulativeSumStatisticsCollection: %@", err);
@@ -246,6 +248,8 @@
     NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
     NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
     NSUInteger interval = [RCTAppleHealthKit uintFromOptions:input key:@"interval" withDefault:60];
+    BOOL skipManual = [RCTAppleHealthKit boolFromOptions:input key:@"skipManual" withDefault:FALSE];
+
 
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
@@ -261,6 +265,7 @@
                                        ascending:ascending
                                            limit:limit
                                         interval:interval
+                                      skipManual:skipManual
                                       completion:^(NSArray *arr, NSError *err){
                                           if (err != nil) {
                                               NSLog(@"error with fetchCumulativeSumStatisticsCollection: %@", err);

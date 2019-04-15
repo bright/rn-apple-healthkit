@@ -451,6 +451,7 @@
                                        ascending:NO
                                            limit:HKObjectQueryNoLimit
                                    interval:interval
+                                      skipManual:false
                                       completion:completionHandler];
 }
 
@@ -513,7 +514,18 @@
                                      ascending:(BOOL)asc
                                          limit:(NSUInteger)lim
                                     completion:(void (^)(NSArray *, NSError *))completionHandler {
-    [self fetchCumulativeSumStatisticsCollection:quantityType unit:unit startDate:startDate endDate:endDate ascending:asc limit:lim interval:24*60 completion:completionHandler];
+    [self fetchCumulativeSumStatisticsCollection:quantityType unit:unit startDate:startDate endDate:endDate ascending:asc limit:lim interval:24*60 skipManual:false completion:completionHandler];
+}
+
+- (void)fetchCumulativeSumStatisticsCollection:(HKQuantityType *)quantityType
+                                          unit:(HKUnit *)unit
+                                     startDate:(NSDate *)startDate
+                                       endDate:(NSDate *)endDate
+                                     ascending:(BOOL)asc
+                                         limit:(NSUInteger)lim
+                                    skipManual:(BOOL)skipManual
+                                    completion:(void (^)(NSArray *, NSError *))completionHandler {
+    [self fetchCumulativeSumStatisticsCollection:quantityType unit:unit startDate:startDate endDate:endDate ascending:asc limit:lim interval:24*60 skipManual:skipManual completion:completionHandler];
 }
 
 - (void)fetchCumulativeSumStatisticsCollection:(HKQuantityType *)quantityType
@@ -523,6 +535,7 @@
                                      ascending:(BOOL)asc
                                          limit:(NSUInteger)lim
                                       interval:(NSUInteger)intervalMinutes
+                                    skipManual:(BOOL)skipManual
                                     completion:(void (^)(NSArray *, NSError *))completionHandler {
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -533,10 +546,15 @@
                                                      fromDate:[NSDate date]];
     anchorComponents.hour = 0;
     NSDate *anchorDate = [calendar dateFromComponents:anchorComponents];
-    
+
+    NSPredicate *predicate = nil;
+    if(skipManual){
+        predicate= [NSPredicate predicateWithFormat:@"metadata.%K != YES", HKMetadataKeyWasUserEntered];
+    }
+
     // Create the query
     HKStatisticsCollectionQuery *query = [[HKStatisticsCollectionQuery alloc] initWithQuantityType:quantityType
-                                                                           quantitySamplePredicate:nil
+                                                                           quantitySamplePredicate:predicate
                                                                                            options:HKStatisticsOptionCumulativeSum
                                                                                         anchorDate:anchorDate
                                                                                 intervalComponents:interval];

@@ -50,7 +50,8 @@
   NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
   NSUInteger interval = [RCTAppleHealthKit uintFromOptions:input key:@"interval" withDefault:60];
   HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit kilocalorieUnit]];
-  
+  BOOL skipManual = [RCTAppleHealthKit boolFromOptions:input key:@"skipManual" withDefault:FALSE];
+
   if(startDate == nil){
     callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
     return;
@@ -65,6 +66,7 @@
                                      ascending:ascending
                                          limit:limit
                                       interval:interval
+                                    skipManual:skipManual
                                     completion:^(NSArray *arr, NSError *err){
                                       if (err != nil) {
                                         NSLog(@"error with fetchCumulativeSumStatisticsCollection: %@", err);
