@@ -211,6 +211,11 @@
      }];
 
     [self.healthStore executeQuery:query];
+
+    HKSampleType *type = [RCTAppleHealthKit hkQuantityTypeFromString:@"Walking"];
+    [self.healthStore enableBackgroundDeliveryForType:type frequency:HKUpdateFrequencyHourly withCompletion:^(BOOL success, NSError * _Nullable error) {
+        NSLog(@"success %s print some error %@", success ? "true" : "false", [error localizedDescription]);
+    }];
 }
 
 
